@@ -112,6 +112,9 @@
    <addaction name="actionentity"/>
    <addaction name="actionAction"/>
    <addaction name="actionStatus"/>
+   <addaction name="actionBackDrop"/>
+   <addaction name="actioncondition"/>
+   <addaction name="actionApply"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_New">
@@ -275,6 +278,42 @@
    </property>
    <property name="toolTip">
     <string>Create a Status</string>
+   </property>
+  </action>
+  <action name="actionBackDrop">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/BackDrop.png</normaloff>resources/BackDrop.png</iconset>
+   </property>
+   <property name="text">
+    <string>BackDrop</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a Group</string>
+   </property>
+  </action>
+  <action name="actionApply">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/Apply.png</normaloff>resources/Apply.png</iconset>
+   </property>
+   <property name="text">
+    <string>Apply</string>
+   </property>
+   <property name="toolTip">
+    <string>Apply an action to cheked entities</string>
+   </property>
+  </action>
+  <action name="actioncondition">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/condition.png</normaloff>resources/condition.png</iconset>
+   </property>
+   <property name="text">
+    <string>condition</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new condition</string>
    </property>
   </action>
  </widget>

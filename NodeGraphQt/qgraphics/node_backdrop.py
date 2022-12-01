@@ -1,12 +1,19 @@
 #!/usr/bin/python
 from Qt import QtGui, QtCore, QtWidgets
 
-from NodeGraphQt.constants import Z_VAL_PIPE, NodeEnum
+from collections import OrderedDict
 from NodeGraphQt.qgraphics.node_abstract import AbstractNodeItem
 from NodeGraphQt.qgraphics.pipe import PipeItem
-from NodeGraphQt.qgraphics.port import PortItem
-
-
+from NodeGraphQt.qgraphics.port import PortItem, CustomPortItem
+from NodeGraphQt.constants import (
+    ITEM_CACHE_MODE,
+    ICON_NODE_BASE,
+    Z_VAL_PIPE,
+    NodeEnum,
+    PortEnum,
+    PortTypeEnum,
+    Z_VAL_NODE
+)
 class BackdropSizer(QtWidgets.QGraphicsItem):
     """
     Sizer item for resizing a backdrop item.
@@ -119,6 +126,8 @@ class BackdropNodeItem(AbstractNodeItem):
         self._sizer = BackdropSizer(self, 26.0)
         self._sizer.set_pos(*self._min_size)
         self._nodes = [self]
+        self._input_items = OrderedDict()
+        self._output_items = OrderedDict()
 
     def _combined_rect(self, nodes):
         group = self.scene().createItemGroup(nodes)
@@ -294,3 +303,149 @@ class BackdropNodeItem(AbstractNodeItem):
     def height(self, height=0.0):
         AbstractNodeItem.height.fset(self, height)
         self._sizer.set_pos(self._width, self._height)
+
+    @property
+    def inputs(self):
+        """
+        Returns:
+            list[PortItem]: input port graphic items.
+        """
+        return list(self._input_items.keys())
+
+    @property
+    def outputs(self):
+        """
+        Returns:
+            list[PortItem]: output port graphic items.
+        """
+        return list(self._output_items.keys())
+
+    def _add_port(self, port):
+        """
+        Adds a port qgraphics item into the node.
+
+        Args:
+            port (PortItem): port item.
+
+        Returns:
+            PortItem: port qgraphics item.
+        """
+        text = QtWidgets.QGraphicsTextItem(port.name, self)
+        text.font().setPointSize(8)
+        text.setFont(text.font())
+        text.setVisible(port.display_name)
+        text.setCacheMode(ITEM_CACHE_MODE)
+        if port.port_type == PortTypeEnum.IN.value:
+            self._input_items[port] = text
+        elif port.port_type == PortTypeEnum.OUT.value:
+            self._output_items[port] = text
+        if self.scene():
+            self.post_init()
+        return port
+
+    def add_input(self, name='input', multi_port=False, display_name=True,
+                  locked=False, painter_func=None):
+        """
+        Adds a port qgraphics item into the node with the "port_type" set as
+        IN_PORT.
+
+        Args:
+            name (str): name for the port.
+            multi_port (bool): allow multiple connections.
+            display_name (bool): display the port name.
+            locked (bool): locked state.
+            painter_func (function): custom paint function.
+
+        Returns:
+            PortItem: input port qgraphics item.
+        """
+        if painter_func:
+            port = CustomPortItem(self, painter_func)
+        else:
+            port = PortItem(self)
+        port.name = name
+        port.port_type = PortTypeEnum.IN.value
+        port.multi_connection = multi_port
+        port.display_name = display_name
+        port.locked = locked
+        return self._add_port(port)
+
+    def add_output(self, name='output', multi_port=False, display_name=True,
+                   locked=False, painter_func=None):
+        """
+        Adds a port qgraphics item into the node with the "port_type" set as
+        OUT_PORT.
+
+        Args:
+            name (str): name for the port.
+            multi_port (bool): allow multiple connections.
+            display_name (bool): display the port name.
+            locked (bool): locked state.
+            painter_func (function): custom paint function.
+
+        Returns:
+            PortItem: output port qgraphics item.
+        """
+        if painter_func:
+            port = CustomPortItem(self, painter_func)
+        else:
+            port = PortItem(self)
+        port.name = name
+        port.port_type = PortTypeEnum.OUT.value
+        port.multi_connection = multi_port
+        port.display_name = display_name
+        port.locked = locked
+        return self._add_port(port)
+
+    def _delete_port(self, port, text):
+        """
+        Removes port item and port text from node.
+
+        Args:
+            port (PortItem): port object.
+            text (QtWidgets.QGraphicsTextItem): port text object.
+        """
+        port.setParentItem(None)
+        text.setParentItem(None)
+        self.scene().removeItem(port)
+        self.scene().removeItem(text)
+        del port
+        del text
+
+    def delete_input(self, port):
+        """
+        Remove input port from node.
+
+        Args:
+            port (PortItem): port object.
+        """
+        self._delete_port(port, self._input_items.pop(port))
+
+    def delete_output(self, port):
+        """
+        Remove output port from node.
+
+        Args:
+            port (PortItem): port object.
+        """
+        self._delete_port(port, self._output_items.pop(port))
+
+    def get_input_text_item(self, port_item):
+        """
+        Args:
+            port_item (PortItem): port item.
+
+        Returns:
+            QGraphicsTextItem: graphic item used for the port text.
+        """
+        return self._input_items[port_item]
+
+    def get_output_text_item(self, port_item):
+        """
+        Args:
+            port_item (PortItem): port item.
+
+        Returns:
+            QGraphicsTextItem: graphic item used for the port text.
+        """
+        return self._output_items[port_item]

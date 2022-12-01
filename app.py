@@ -1,3 +1,5 @@
+# To translate .ui file 
+##python -m PyQt5.uic.pyuic -o main_window_ui.py ui\main_window.ui  ##
 import sys
 
 from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QMessageBox
@@ -26,7 +28,7 @@ class Window(QMainWindow, Ui_MainWindow):
         super().__init__(parent)
         self.setupUi(self)
         #Calling methods
-        self.setWindowIcon(QtGui.QIcon('icone.png'))
+        self.setWindowIcon(QtGui.QIcon('ui\\resources\icone.png'))
         # self.UiComponents()
         self.connectSignalsSlots()
         self.graph = NodeGraph()
@@ -34,6 +36,8 @@ class Window(QMainWindow, Ui_MainWindow):
             basic_nodes.BasicNodeA,
             basic_nodes.BasicNodeB,
             basic_nodes.BasicNodeC,
+            basic_nodes.BasicNodeD,
+            basic_nodes.BackdropIn,
             group_node.MyGroupNodeA,
             group_node.MyGroupNodeB,
             group_node.MyGroupNodeC,
@@ -50,6 +54,15 @@ class Window(QMainWindow, Ui_MainWindow):
         properties_bin = PropertiesBinWidget(node_graph=self.graph)
         properties_bin.setWindowFlags(QtCore.Qt.Tool)
 
+        # # NODE PALETTE FOR INSTRUCTION SEQUENCE, make it real time
+        # nodes_palette = NodesPaletteWidget(node_graph=self.graph)
+        # nodes_palette.set_category_label('nodeGraphQt.nodes', 'Builtin Nodes')
+        # nodes_palette.set_category_label('nodes.custom.ports', 'Custom Port Nodes')
+        # nodes_palette.set_category_label('nodes.widget', 'Widget Nodes')
+        # nodes_palette.set_category_label('nodes.basic', 'Basic Nodes')
+        # nodes_palette.set_category_label('nodes.group', 'Group Nodes')
+        # nodes_palette.show()
+        
         # example show the node properties bin widget when a node is double clicked.
         def display_properties_bin(node):
             if not properties_bin.isVisible():
@@ -89,6 +102,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.actionentity.triggered.connect(self.Entity)
         self.actionAction.triggered.connect(self.Action)
         self.actionStatus.triggered.connect(self.Status)
+        self.actionBackDrop.triggered.connect(self.BackdropIn)
+        self.actionApply.triggered.connect(self.Apply)
+        self.actioncondition.triggered.connect(self.Condition)
 
     def findAndReplace(self):
         dialog = FindReplaceDialog(self)
@@ -97,7 +113,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def Entity(self):
         self.graph.create_node(
         'nodes.basic.BasicNodeA', text_color='#feab20')
-    
+        
     def Action(self):
         self.graph.create_node(
         'nodes.widget.DropdownMenuNodeA', text_color='#feab20')
@@ -105,6 +121,18 @@ class Window(QMainWindow, Ui_MainWindow):
     def Status(self):
         self.graph.create_node(
         'nodes.group.MyGroupNodeA', text_color='#feab20')
+
+    def BackdropIn(self):
+        self.graph.create_node(
+        'nodes.backdrop.BackdropIn')
+
+    def Apply(self):
+         self.graph.create_node(
+        'nodes.widget.CheckboxNode', name='checkbox node')
+    
+    def Condition(self):
+        self.graph.create_node(
+        'nodes.basic.BasicNodeD', text_color='#feab20')
 
     def about(self):
         QMessageBox.about(
@@ -128,3 +156,4 @@ if __name__ == "__main__":
     win = Window()
     win.showMaximized()
     sys.exit(app.exec())
+    
