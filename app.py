@@ -22,118 +22,99 @@ from Test.custom_nodes import (
     custom_ports_node,
     widget_nodes,
 )
-class Window(QMainWindow, Ui_MainWindow):
+class Window(QMainWindow, Ui_MainWindow,NodeGraph):
     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        #Calling methods
         self.setWindowIcon(QtGui.QIcon('ui\\resources\icone.png'))
-        # self.UiComponents()
         self.connectSignalsSlots()
         self.graph = NodeGraph()
         self.graph.register_nodes([
-            basic_nodes.BasicNodeA,
-            basic_nodes.BasicNodeB,
-            basic_nodes.BasicNodeC,
-            basic_nodes.BasicNodeD,
-            basic_nodes.BackdropIn,
-            group_node.MyGroupNodeA,
-            group_node.MyGroupNodeB,
-            group_node.MyGroupNodeC,
-            widget_nodes.DropdownMenuNodeA,
-            widget_nodes.DropdownMenuNodeB,
-            widget_nodes.CheckboxNode
+            basic_nodes.Entity,
+            widget_nodes.Action,
+            basic_nodes.State,
+            basic_nodes.Tool,
+            basic_nodes.Condition,            
+            basic_nodes.BackdropIn,            
+            widget_nodes.ApplyTo
         ])
 
         self.graph_widget = self.graph.widget
     
-        #Setting widget to MainWindow
+        # Setting widget to MainWindow
         self.setCentralWidget(self.graph_widget)
-            # create a node properties bin widget.
-        properties_bin = PropertiesBinWidget(node_graph=self.graph)
-        properties_bin.setWindowFlags(QtCore.Qt.Tool)
 
-        # # NODE PALETTE FOR INSTRUCTION SEQUENCE, make it real time
-        # nodes_palette = NodesPaletteWidget(node_graph=self.graph)
-        # nodes_palette.set_category_label('nodeGraphQt.nodes', 'Builtin Nodes')
-        # nodes_palette.set_category_label('nodes.custom.ports', 'Custom Port Nodes')
-        # nodes_palette.set_category_label('nodes.widget', 'Widget Nodes')
-        # nodes_palette.set_category_label('nodes.basic', 'Basic Nodes')
-        # nodes_palette.set_category_label('nodes.group', 'Group Nodes')
-        # nodes_palette.show()
-        
-        # example show the node properties bin widget when a node is double clicked.
-        def display_properties_bin(node):
-            if not properties_bin.isVisible():
-                properties_bin.show()
+        # create a node properties bin widget.
+        self.properties_bin = PropertiesBinWidget(node_graph=self.graph)
+        self.properties_bin.setWindowFlags(QtCore.Qt.Tool)
+
+        # Show the node properties bin widget when a node is double clicked.
+        def display_properties_bin():
+            if not self.properties_bin.isVisible():
+                self.properties_bin.show()
 
         # wire function to "node_double_clicked" signal.
         self.graph.node_double_clicked.connect(display_properties_bin)
 
-    # def UiComponents(self):
+        #create a node tree widget
+        self.nodes_tree = NodesTreeWidget(node_graph=self.graph)
+        self.nodes_tree.show()
 
-    #     #Creating a NodeGraph canvas
-    #     graph = NodeGraph()
-
-    #     # registered example nodes.
-    #     graph.register_nodes([
-    #         basic_nodes.BasicNodeA,
-    #         basic_nodes.BasicNodeB,
-    #         basic_nodes.BasicNodeC,
-    #         group_node.MyGroupNodeA,
-    #         group_node.MyGroupNodeB,
-    #         group_node.MyGroupNodeC,
-    #         widget_nodes.DropdownMenuNodeA,
-    #         widget_nodes.DropdownMenuNodeB,
-    #         widget_nodes.CheckboxNode
-    #     ])
-
-    #     self.graph_widget = graph.widget
-    
-    #     #Setting widget to MainWindow
-    #     self.setCentralWidget(self.graph_widget)
-    #     return graph
-
+    # connect functions to buttons
     def connectSignalsSlots(self):
         self.action_Exit.triggered.connect(self.close)
         self.action_Find_Replace.triggered.connect(self.findAndReplace)
         self.action_About.triggered.connect(self.about)
         self.actionentity.triggered.connect(self.Entity)
         self.actionAction.triggered.connect(self.Action)
-        self.actionStatus.triggered.connect(self.Status)
+        self.actionStatus.triggered.connect(self.State)
+        self.actionTool.triggered.connect(self.Tool)
         self.actionBackDrop.triggered.connect(self.BackdropIn)
-        self.actionApply.triggered.connect(self.Apply)
+        self.actionApply.triggered.connect(self.ApplyTo)
         self.actioncondition.triggered.connect(self.Condition)
 
+    # create find and replace function
     def findAndReplace(self):
         dialog = FindReplaceDialog(self)
         dialog.exec()
 
+    # create Entity node function
     def Entity(self):
         self.graph.create_node(
-        'nodes.basic.BasicNodeA', text_color='#feab20')
-        
+        'nodes.basic.Entity', text_color='#feab20')
+    
+    # create Action node function
     def Action(self):
         self.graph.create_node(
-        'nodes.widget.DropdownMenuNodeA', text_color='#feab20')
+        'nodes.widget.Action', text_color='#feab20')
     
-    def Status(self):
+    # create State node function
+    def State(self):
         self.graph.create_node(
-        'nodes.group.MyGroupNodeA', text_color='#feab20')
+        'nodes.basic.State', text_color='#feab20')
 
+    # create Tool node function
+    def Tool(self):
+        self.graph.create_node(
+        'nodes.basic.Tool', text_color='#feab20')
+
+    # create BacdropIn wrapper node function
     def BackdropIn(self):
         self.graph.create_node(
         'nodes.backdrop.BackdropIn')
 
-    def Apply(self):
+    # create ApplyTo node function
+    def ApplyTo(self):
          self.graph.create_node(
-        'nodes.widget.CheckboxNode', name='checkbox node')
+        'nodes.widget.ApplyTo', name='checkbox node')
     
+    # create Condition node function
     def Condition(self):
         self.graph.create_node(
-        'nodes.basic.BasicNodeD', text_color='#feab20')
+        'nodes.basic.Condition', text_color='#feab20')
 
+    # create About function
     def about(self):
         QMessageBox.about(
             self,
@@ -144,7 +125,7 @@ class Window(QMainWindow, Ui_MainWindow):
             "<p>- Python</p>"
             "<p>- FreeCad</p>",
         )
-
+# FinReplace =  New window in UI => New Class
 class FindReplaceDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -152,8 +133,11 @@ class FindReplaceDialog(QDialog):
 
 
 if __name__ == "__main__":
+
     app = QApplication(sys.argv)
     win = Window()
     win.showMaximized()
     sys.exit(app.exec())
+    
+
     

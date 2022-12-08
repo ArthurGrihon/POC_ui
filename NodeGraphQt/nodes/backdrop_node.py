@@ -323,7 +323,7 @@ class BackdropNode(NodeObject):
         port.model.node = None
         self.draw()
 
-    def set_port_deletion_allowed(self, mode=False):
+    def set_port_deletion_allowed(self, mode=True):
         """
         Allow ports to be removable on this node.
 

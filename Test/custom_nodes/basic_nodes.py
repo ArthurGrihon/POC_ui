@@ -11,58 +11,55 @@ class BackdropIn(BackdropNode):
     def __init__(self):
         super(BackdropIn, self).__init__()
 
-        # # create node inputs.
-        self.add_input('in A')
-        # # create node outputs.
-        self.add_output('out A')
+        # create node inputs.
+        self.add_input('in')
+        # create node outputs.
+        # self.add_output('out')
 
-class BasicNodeA(BaseNode):
+class Entity(BaseNode):
 
     # unique node identifier.
     __identifier__ = 'nodes.basic'
 
     # initial default node name.
-    NODE_NAME = 'Right Flap 1'
+    NODE_NAME = 'Entity 1'
 
     def __init__(self):
-        super(BasicNodeA, self).__init__()
+        super(Entity, self).__init__()
 
         # create node inputs.
         # create node outputs.
-        self.add_output('out A')
+        # self.add_output('out')
 
-
-class BasicNodeB(BaseNode):
+class State(BaseNode):
 
     # unique node identifier.
     __identifier__ = 'nodes.basic'
 
     # initial default node name.
-    NODE_NAME = 'Right Flap 2'
+    NODE_NAME = 'State 1'
 
     def __init__(self):
-        super(BasicNodeB, self).__init__()
+        super(State, self).__init__()
 
         # create node inputs.
         # create node outputs.
-        self.add_output('out A')
+        # self.add_input('in')
 
-class BasicNodeC(BaseNode):
-
+class Tool(BaseNode):
     # unique node identifier.
     __identifier__ = 'nodes.basic'
 
     # initial default node name.
-    NODE_NAME = 'Right Flap 3'
-    
+    NODE_NAME = 'Tool 1'
+
     def __init__(self):
-        super(BasicNodeC, self).__init__()
+        super(Tool, self).__init__()
 
-        # create node inputs.
-        # create node outputs.
-        self.add_output('out A')
+        # create node inputs
+        # create node outputs
 
-class BasicNodeD(BaseNode):
+class Condition(BaseNode):
 
     # unique node identifier.
     __identifier__ = 'nodes.basic'
@@ -71,7 +68,7 @@ class BasicNodeD(BaseNode):
     NODE_NAME = 'Condition 1'
     
     def __init__(self):
-        super(BasicNodeD, self).__init__()
+        super(Condition, self).__init__()
 
         # create node inputs.
         self.add_input('in')

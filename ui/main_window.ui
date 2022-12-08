@@ -115,6 +115,8 @@
    <addaction name="actionBackDrop"/>
    <addaction name="actioncondition"/>
    <addaction name="actionApply"/>
+   <addaction name="actionTool"/>
+   <addaction name="actionNode_Tree"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action_New">
@@ -314,6 +316,27 @@
    </property>
    <property name="toolTip">
     <string>Create a new condition</string>
+   </property>
+  </action>
+  <action name="actionNode_Tree">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/Tree.png</normaloff>resources/Tree.png</iconset>
+   </property>
+   <property name="text">
+    <string>Node Tree</string>
+   </property>
+   <property name="toolTip">
+    <string>Display Node Tree</string>
+   </property>
+  </action>
+  <action name="actionTool">
+   <property name="icon">
+    <iconset>
+     <normaloff>resources/tool.png</normaloff>resources/tool.png</iconset>
+   </property>
+   <property name="text">
+    <string>Tool</string>
    </property>
   </action>
  </widget>
